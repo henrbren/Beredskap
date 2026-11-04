@@ -2,6 +2,7 @@ import { router, type Href } from 'expo-router';
 import { useMemo } from 'react';
 import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 
+import { Missions, RankCard } from '@/components/game-cards';
 import { Logo } from '@/components/logo';
 import { ProgressRing } from '@/components/progress-ring';
 import { Screen } from '@/components/screen';
@@ -9,12 +10,15 @@ import { Bar, Card, Icon, IconButton, Row, SectionLabel, Tap, Txt } from '@/comp
 import { scenarioById, severityMeta } from '@/data';
 import { municipalityInfo } from '@/data/kommuner';
 import { emergencyNumbers } from '@/data/numbers';
+import { rankFor } from '@/data/game';
 import { tipOfTheDay } from '@/data/tips';
 import type { IconName } from '@/data/types';
 import { daysUntil, greeting, relativeDays } from '@/lib/dates';
+import { CONTENT_MAX_WIDE, useLayout } from '@/lib/layout';
 import { useOfflineReadiness } from '@/lib/offline-readiness';
 import { readinessScore, scoreLabel, selfSufficiency, upcomingRotations } from '@/lib/readiness';
 import { useApp } from '@/store/app';
+import { useGame } from '@/store/game';
 import { fonts, radius, space, usePalette } from '@/theme';
 
 const QUICK: { label: string; icon: IconName; href: Href; urgent?: boolean }[] = [
@@ -37,6 +41,9 @@ export default function Today() {
   const reminderDays = useApp((s) => s.settings.reminderDaysBefore);
 
   const offline = useOfflineReadiness();
+  const { wide } = useLayout();
+  const xp = useGame((s) => s.xp);
+  const rank = rankFor(xp);
   const score = useMemo(() => readinessScore(inventory), [inventory]);
   const suff = useMemo(() => selfSufficiency(inventory, household), [inventory, household]);
   const rotations = useMemo(() => upcomingRotations(inventory, Math.max(60, reminderDays)), [inventory, reminderDays]);
@@ -47,7 +54,7 @@ export default function Today() {
   const persons = household.adults + household.children;
 
   return (
-    <Screen inTabs>
+    <Screen inTabs maxWidth={wide ? CONTENT_MAX_WIDE : undefined}>
       {/* Header */}
       <Row style={{ justifyContent: 'space-between', marginBottom: space.xl }}>
         <Row gap={10}>
@@ -59,9 +66,21 @@ export default function Today() {
             <Txt variant="heading">{greeting(now)}</Txt>
           </View>
         </Row>
-        <IconButton icon="cog-outline" label="Innstillinger" onPress={() => router.push('/innstillinger')} />
+        <Row gap={8}>
+          {!wide && (
+            <Tap onPress={() => router.push('/profil')} style={[styles.xpChip, { backgroundColor: p.inverse }]}>
+              <Icon name={rank.icon} size={16} color={p.signal} />
+              <Txt variant="label" style={{ color: p.onInverse }}>
+                {rank.title} · {xp} XP
+              </Txt>
+            </Tap>
+          )}
+          <IconButton icon="cog-outline" label="Innstillinger" onPress={() => router.push('/innstillinger')} />
+        </Row>
       </Row>
 
+      <View style={wide ? styles.columns : undefined}>
+      <View style={wide ? styles.colLeft : undefined}>
       {/* Ask / search */}
       <Tap onPress={() => router.push('/assistent')} style={{ marginBottom: space.md }}>
         <View style={[styles.ask, { backgroundColor: p.surface, borderColor: p.line }]}>
@@ -199,6 +218,14 @@ export default function Today() {
         </Card>
       </Tap>
 
+      </View>
+      <View style={wide ? styles.colRight : undefined}>
+      {/* Progress & missions */}
+      <View style={{ marginTop: wide ? 0 : space.xxl, gap: space.xl }}>
+        <RankCard />
+        <Missions />
+      </View>
+
       {/* Offline readiness */}
       {offline.done < offline.total && (
         <Tap onPress={() => router.push('/lagring')} style={{ marginTop: space.md }}>
@@ -284,8 +311,8 @@ export default function Today() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ marginHorizontal: -20 }}
-          contentContainerStyle={{ paddingHorizontal: 20, gap: 10 }}>
+          style={{ marginHorizontal: wide ? 0 : -20 }}
+          contentContainerStyle={{ paddingHorizontal: wide ? 0 : 20, gap: 10 }}>
           {pinned
             .map((id) => scenarioById[id])
             .filter(Boolean)
@@ -326,6 +353,8 @@ export default function Today() {
           </Txt>
         </View>
       </View>
+      </View>
+      </View>
     </Screen>
   );
 }
@@ -346,6 +375,10 @@ function LinkText({ label, onPress }: { label: string; onPress: () => void }) {
 }
 
 const styles = StyleSheet.create({
+  xpChip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: radius.pill, paddingHorizontal: 12, height: 36 },
+  columns: { flexDirection: 'row', gap: space.xxl, alignItems: 'flex-start' },
+  colLeft: { flex: 1.15, minWidth: 0 },
+  colRight: { flex: 1, minWidth: 0 },
   ask: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -25,6 +25,22 @@ Appen har i tillegg disse delene:
 | **Verktøy** | SOS-signal (blits, skjerm, lyd og fløyte), lommelykt (blits, hvitt eller rødt skjermlys, blink), min posisjon (grader og minutter, UTM og SMS, «les opp for 113»), kompass med kurslås, sol og lys (soloppgang, mørkt, månefase), morse (oversetter og blinking), kalkulatorer (vann og mat, strøm, omregning), arkiv (bilder av dokumenter og krisedagbok), lager, krisekort, tilfluktsrom-radar og nødnumre. |
 | **Bibliotek** | Leksikon, bøker (grunnkurset er gratis, resten er Beredskap Pluss), kurs, søk og assistent. |
 
+## Spillifisering
+
+Ekte beredskapsarbeid gir XP. Du får XP for å registrere varer, gjøre dem komplette, rotere i tide, fylle ut krisekortet, laste ned kart, lese og ta kurs.
+
+- **Rang:** sju nivåer, fra Rekrutt til Legende.
+- **Merker:** 21 stykker, for eksempel Vannbærer, Spiskammer, Syv døgn, Rotasjonsmester og Sertifisert.
+- **Ukens oppdrag:** tre oppdrag per uke, valgt ut fra uken, og en ukestreak.
+- **Lagerrunde:** registrer lageret ett kort om gangen («Ja, har alt / Har litt / Mangler»). Handlelisten kan deles som tekst.
+- **Feiring:** XP-varsler for vanlige handlinger, og konfetti for nye merker og ny rang.
+
+Belønningene gis bare én gang per handling og kan ikke «farmes» (`src/lib/game-engine.ts`, `src/data/game.ts`).
+
+## Web og nettbrett
+
+På skjermer som er 960 px eller bredere får appen en fast sidemeny med navigasjon, rang og SOS. Innholdet sentreres, forsiden får to kolonner, og knapper og kort reagerer når du holder musen over dem. Brytepunktet styres i `src/lib/layout.ts`.
+
 ## Design
 
 Designspråket heter «feltmanual»: varmt papir og blekk, ett signaloransje (`#F2481B`), *Space Grotesk* til tekst og *JetBrains Mono* til etiketter. Tynne linjer og nummererte seksjoner (`01 — VANN ───`) går igjen, og beredskapsnivået vises som en instrumentlignende måler. Appen har lys og mørk modus. Fontene er bundlet, så de virker også offline.

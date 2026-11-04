@@ -46,6 +46,9 @@ export default function Onboarding() {
           paddingTop: insets.top + space.lg,
           paddingBottom: insets.bottom + space.lg,
           paddingHorizontal: gutter,
+          width: '100%',
+          maxWidth: 560,
+          alignSelf: 'center',
         }}>
         <Row style={{ justifyContent: 'space-between', marginBottom: space.xxl }}>
           <Logo size={36} />

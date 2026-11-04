@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Share, StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/screen';
 import { Bar, Button, Card, Icon, IconButton, Row, SectionLabel, Stepper, Tap, Txt } from '@/components/ui';
@@ -53,6 +53,16 @@ export default function Lager() {
 
   const persons = household.adults + household.children;
 
+  const shareShoppingList = () => {
+    const missing = inventory.filter((i) => i.have < i.target);
+    const lines = categoryOrder.flatMap((c) => {
+      const items = missing.filter((i) => i.category === c);
+      if (!items.length) return [];
+      return [`\n${categoryMeta[c].label.toUpperCase()}`, ...items.map((i) => `☐ ${i.name}: ${i.target - i.have} ${i.unit}`)];
+    });
+    Share.share({ title: 'Handleliste', message: ['Handleliste — beredskapslager', ...lines].join('\n') }).catch(() => {});
+  };
+
   return (
     <Screen
       back
@@ -61,9 +71,30 @@ export default function Lager() {
       right={
         <>
           <IconButton icon="clipboard-check-outline" label="Kvartalssjekk" onPress={() => setShowCheck((v) => !v)} />
+          <IconButton icon="cart-outline" label="Del handleliste" onPress={shareShoppingList} />
           <IconButton icon="plus" label="Legg til vare" onPress={() => router.push('/vare')} />
         </>
       }>
+      {/* Lagerrunde */}
+      <Tap onPress={() => router.push('/lagerrunde')} style={{ marginBottom: space.lg }}>
+        <View style={[styles.round, { backgroundColor: p.inverse }]}>
+          <View style={[styles.roundIcon, { backgroundColor: p.signal }]}>
+            <Icon name="cards-outline" size={24} color={p.onSignal} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Txt variant="bodyStrong" style={{ color: p.onInverse }}>
+              Ta en lagerrunde
+            </Txt>
+            <Txt variant="small" style={{ color: p.onInverse, opacity: 0.65 }}>
+              Gå gjennom boden kort for kort · tjen XP
+            </Txt>
+          </View>
+          <Txt variant="mono" style={{ color: p.signal }}>
+            {inventory.length - complete} igjen
+          </Txt>
+        </View>
+      </Tap>
+
       {/* Summary */}
       <Row gap={8} style={{ marginBottom: space.lg }}>
         <Stat value={`${score}%`} label="Dekket" tone="signal" />
@@ -244,6 +275,8 @@ function ItemRow({
 }
 
 const styles = StyleSheet.create({
+  round: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: radius.lg, padding: 14 },
+  roundIcon: { width: 44, height: 44, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   stat: {
     flex: 1,
     borderWidth: StyleSheet.hairlineWidth,

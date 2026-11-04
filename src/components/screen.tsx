@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, type ScrollViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CONTENT_MAX, useLayout } from '@/lib/layout';
 import { gutter, space, usePalette } from '@/theme';
 
 import { IconButton, Txt } from './ui';
@@ -23,9 +24,12 @@ export function Screen({
   inTabs,
   contentStyle,
   bg,
+  maxWidth,
   ...rest
 }: ScrollViewProps & {
   bg?: string;
+  /** Max content width on wide screens (web/tablet). */
+  maxWidth?: number;
   eyebrow?: string;
   title?: string;
   subtitle?: string;
@@ -37,6 +41,8 @@ export function Screen({
 }) {
   const p = usePalette();
   const insets = useSafeAreaInsets();
+  const { wide } = useLayout();
+  const max = maxWidth ?? CONTENT_MAX;
   return (
     <View style={{ flex: 1, backgroundColor: bg ?? p.bg }}>
       <ScrollView
@@ -44,9 +50,12 @@ export function Screen({
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={[
           {
-            paddingTop: insets.top + space.md,
-            paddingBottom: (inTabs ? TAB_BAR_SPACE : space.xxxl) + insets.bottom,
-            paddingHorizontal: gutter,
+            paddingTop: insets.top + (wide ? space.xxl : space.md),
+            paddingBottom: (inTabs && !wide ? TAB_BAR_SPACE : space.xxxl) + insets.bottom,
+            paddingHorizontal: wide ? space.xxl : gutter,
+            width: '100%',
+            maxWidth: wide ? max + space.xxl * 2 : undefined,
+            alignSelf: 'center',
           },
           contentStyle,
         ]}>

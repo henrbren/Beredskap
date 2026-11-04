@@ -98,7 +98,10 @@ export function Tap({
         if (haptics) haptic.tap();
         onPress?.(e);
       }}
-      style={({ pressed }) => [style, pressed && { opacity: 0.85, transform: [{ scale: 0.985 }] }]}>
+      style={(state) => {
+        const { pressed, hovered } = state as { pressed: boolean; hovered?: boolean };
+        return [style, hovered && !pressed && { opacity: 0.9 }, pressed && { opacity: 0.85, transform: [{ scale: 0.985 }] }];
+      }}>
       {children}
     </Pressable>
   );

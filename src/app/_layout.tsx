@@ -7,13 +7,17 @@ import {
   useFonts,
 } from '@expo-google-fonts/space-grotesk';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { CelebrationLayer } from '@/components/celebration';
+import { Sidebar } from '@/components/tab-bar';
+import { useLayout } from '@/lib/layout';
+import { startGameEngine } from '@/lib/game-engine';
 import { syncReminders } from '@/lib/notifications';
 import { useShelters } from '@/lib/shelters';
 import { useApp, useHydrated } from '@/store/app';
@@ -56,9 +60,14 @@ export default function RootLayout() {
   const scheme = useScheme();
   const p = palettes[scheme];
   const ready = fontsLoaded && hydrated;
+  const { wide } = useLayout();
+  const pathname = usePathname();
+  const onboarded = useApp((s) => s.onboarded);
+  const showSidebar = wide && onboarded && pathname !== '/onboarding';
 
   useEffect(() => {
     useShelters.getState().load();
+    startGameEngine();
   }, []);
 
   useEffect(() => {
@@ -79,6 +88,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: p.bg }}>
       <ThemeProvider value={navTheme}>
         <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+        {showSidebar && <Sidebar />}
+        <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: p.bg } }}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="onboarding" options={{ gestureEnabled: false, animation: 'fade' }} />
@@ -92,6 +104,9 @@ export default function RootLayout() {
           <Stack.Screen name="innstillinger" />
           <Stack.Screen name="nodnumre" />
         </Stack>
+        </View>
+        </View>
+        <CelebrationLayer />
       </ThemeProvider>
     </GestureHandlerRootView>
   );

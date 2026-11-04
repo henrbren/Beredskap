@@ -9,6 +9,7 @@ import { Button, Field, Icon, IconButton, Row, Tap, Txt } from '@/components/ui'
 import { compassLabel, bearing, distance, formatDistance } from '@/lib/geo';
 import { haptic } from '@/lib/haptics';
 import { useShelters } from '@/lib/shelters';
+import { useLayout } from '@/lib/layout';
 import { useLocation } from '@/lib/use-location';
 import { useOffline, waypointKinds, type WaypointKind } from '@/store/offline';
 import { fonts, radius, space, usePalette } from '@/theme';
@@ -20,6 +21,7 @@ type Selected = { kind: 'shelter' | 'waypoint'; id: string } | null;
 export default function Kart() {
   const p = usePalette();
   const insets = useSafeAreaInsets();
+  const { wide } = useLayout();
   const mapRef = useRef<TileMapHandle>(null);
   const shelters = useShelters((s) => s.shelters);
   const waypoints = useOffline((s) => s.waypoints);
@@ -140,7 +142,7 @@ export default function Kart() {
       </View>
 
       {/* Bottom sheet */}
-      <View style={[styles.bottom, { bottom: TAB_BAR_SPACE + insets.bottom - 18 }]} pointerEvents="box-none">
+      <View style={[styles.bottom, wide ? styles.bottomWide : { bottom: TAB_BAR_SPACE + insets.bottom - 18 }]} pointerEvents="box-none">
         {draft ? (
           <View style={[styles.sheet, { backgroundColor: p.surface, borderColor: p.line }]}>
             <Row style={{ justifyContent: 'space-between' }}>
@@ -266,6 +268,7 @@ const styles = StyleSheet.create({
   },
   controls: { position: 'absolute', right: 14, gap: 8 },
   bottom: { position: 'absolute', left: 14, right: 14 },
+  bottomWide: { bottom: 24, left: 24, right: undefined, width: 420 },
   sheet: { borderWidth: StyleSheet.hairlineWidth, borderRadius: radius.lg, padding: space.lg, gap: space.md },
   hint: {
     flexDirection: 'row',

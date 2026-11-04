@@ -34,9 +34,11 @@ export function formatDate(iso: string): string {
   return `${d.getDate()}. ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+/** «4. nov» this year, «4. nov 2027» otherwise. */
 export function formatShortDate(iso: string): string {
   const d = fromISODate(iso);
-  return `${d.getDate()}. ${MONTHS[d.getMonth()]}`;
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return `${d.getDate()}. ${MONTHS[d.getMonth()]}${sameYear ? '' : ` ${d.getFullYear()}`}`;
 }
 
 /** «om 3 dager», «i dag», «for 2 uker siden» … */
