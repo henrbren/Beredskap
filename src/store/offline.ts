@@ -26,10 +26,11 @@ export interface MapArea {
   complete: boolean;
 }
 
-export type WaypointKind = 'motested' | 'vann' | 'ly' | 'bil' | 'forsyning' | 'fare' | 'annet';
+export type WaypointKind = 'motested' | 'infopunkt' | 'vann' | 'ly' | 'bil' | 'forsyning' | 'fare' | 'annet';
 
 export const waypointKinds: Record<WaypointKind, { label: string; icon: IconName }> = {
   motested: { label: 'Møtested', icon: 'account-group' },
+  infopunkt: { label: 'Infopunkt', icon: 'information' },
   vann: { label: 'Vannkilde', icon: 'water' },
   ly: { label: 'Ly / hytte', icon: 'home-roof' },
   bil: { label: 'Bil', icon: 'car' },

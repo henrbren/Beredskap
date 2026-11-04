@@ -12,6 +12,7 @@ export function cardAsText(card: CrisisCard): string {
   if (card.address) lines.push(`Adresse: ${card.address}`);
   if (card.meetingPoint) lines.push(`Møtested: ${card.meetingPoint}`);
   if (card.meetingPointAlt) lines.push(`Reserve-møtested: ${card.meetingPointAlt}`);
+  if (card.infoPoint) lines.push(`Kommunens infopunkt: ${card.infoPoint}`);
   if (card.outOfTownContact) lines.push(`Kontakt utenbys: ${card.outOfTownContact}`);
   if (card.members.length) {
     lines.push('', 'HUSSTANDEN');
@@ -48,7 +49,7 @@ function cardAsHtml(card: CrisisCard): string {
   </style></head><body><div class="card">
     <span class="bar">KRISEKORT</span>
     <h2>Hjem og møtested</h2><table>
-      ${row('Adresse', card.address)}${row('Møtested', card.meetingPoint)}${row('Reserve-møtested', card.meetingPointAlt)}${row('Kontakt utenbys', card.outOfTownContact)}
+      ${row('Adresse', card.address)}${row('Møtested', card.meetingPoint)}${row('Reserve-møtested', card.meetingPointAlt)}${row('Kommunens infopunkt', card.infoPoint ?? '')}${row('Kontakt utenbys', card.outOfTownContact)}
     </table>
     ${card.members.length ? `<h2>Husstanden</h2><table>${card.members.map((m) => row(m.name, m.medical || '—')).join('')}</table>` : ''}
     ${card.contacts.length ? `<h2>Kontakter</h2><table>${card.contacts.map((c) => row(`${c.name}${c.relation ? ` (${c.relation})` : ''}`, c.phone)).join('')}</table>` : ''}

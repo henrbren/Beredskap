@@ -95,6 +95,11 @@ export const scenarios: Scenario[] = [
             title: 'Følg med på meldinger fra kommunen',
             detail: 'Kommunen kan opprette varmestuer og steder for informasjon og vann.',
           },
+          {
+            title: 'Oppsøk kommunens informasjonspunkt',
+            detail:
+              'Er strøm og mobilnett borte lenge, får du informasjon, varme og hjelp der. Hvor det er, varierer: rådhus, skole eller idrettsanlegg. Legg ditt inn på krisekortet før det skjer.',
+          },
         ],
       },
       {
@@ -402,8 +407,8 @@ export const scenarios: Scenario[] = [
         label: 'Hvis det varer',
         steps: [
           {
-            title: 'Følg med på kommunens oppslag',
-            detail: 'Kommunen kan bruke oppslag, høyttalerbil og oppmøtesteder for å nå innbyggerne.',
+            title: 'Gå til kommunens informasjonspunkt',
+            detail: 'Kommunen kan bruke oppslag, høyttalerbil og informasjonspunkter (f.eks. rådhus, skole eller idrettsanlegg) for å nå innbyggerne.',
           },
           {
             title: 'Ta vare på medisiner',

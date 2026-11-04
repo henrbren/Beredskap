@@ -41,11 +41,12 @@ export default function Krisekort() {
             </View>
           )}
 
-          {(card.address || card.meetingPoint || card.meetingPointAlt || card.outOfTownContact) && (
+          {(card.address || card.meetingPoint || card.meetingPointAlt || card.outOfTownContact || card.infoPoint) && (
             <Section title="Hjem og møtested">
               <KV k="Adresse" v={card.address} />
               <KV k="Møtested" v={card.meetingPoint} strong />
               <KV k="Reserve" v={card.meetingPointAlt} />
+              <KV k="Infopunkt" v={card.infoPoint} strong />
               <KV k="Kontakt utenbys" v={card.outOfTownContact} />
             </Section>
           )}

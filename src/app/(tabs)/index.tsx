@@ -7,6 +7,7 @@ import { ProgressRing } from '@/components/progress-ring';
 import { Screen } from '@/components/screen';
 import { Bar, Card, Icon, IconButton, Row, SectionLabel, Tap, Txt } from '@/components/ui';
 import { scenarioById, severityMeta } from '@/data';
+import { municipalityInfo } from '@/data/kommuner';
 import { emergencyNumbers } from '@/data/numbers';
 import { tipOfTheDay } from '@/data/tips';
 import type { IconName } from '@/data/types';
@@ -174,6 +175,24 @@ export default function Today() {
               {cardFilled
                 ? `Møtested${card.meetingPoint ? `: ${card.meetingPoint}` : ' mangler'} · ${card.contacts.length} ${card.contacts.length === 1 ? 'kontakt' : 'kontakter'}`
                 : 'Møtested, kontakter og helseinfo — fyll ut på 3 minutter'}
+            </Txt>
+          </View>
+          <Icon name="chevron-right" tone="muted" />
+        </Card>
+      </Tap>
+
+      {/* Kommunens infopunkt */}
+      <Tap onPress={() => router.push('/krisekort-rediger')} style={{ marginTop: space.md }}>
+        <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+          <View style={[styles.crisisIcon, { backgroundColor: p.surfaceAlt }]}>
+            <Icon name="information-outline" size={24} tone="signal" />
+          </View>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Txt variant="label" tone="muted">
+              Infopunkt ved strømbrudd{household.municipality ? ` · ${household.municipality}` : ''}
+            </Txt>
+            <Txt variant="bodyStrong" numberOfLines={2}>
+              {card.infoPoint || municipalityInfo(household.municipality)?.infoPoints || 'Legg inn kommunens informasjonspunkt'}
             </Txt>
           </View>
           <Icon name="chevron-right" tone="muted" />

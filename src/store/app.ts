@@ -51,6 +51,8 @@ export interface CrisisCard {
   address: string;
   meetingPoint: string;
   meetingPointAlt: string;
+  /** Kommunens informasjonspunkt ved langvarig strøm-/ekombrudd. */
+  infoPoint: string;
   outOfTownContact: string;
   waterMain: string;
   fuseBox: string;
@@ -110,6 +112,7 @@ const defaultCard: CrisisCard = {
   address: '',
   meetingPoint: '',
   meetingPointAlt: '',
+  infoPoint: '',
   outOfTownContact: '',
   waterMain: '',
   fuseBox: '',

@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/screen';
 import { Button, Card, Field, Icon, Row, SectionLabel, Tap, Txt } from '@/components/ui';
+import { genericInfoPoint, municipalityInfo } from '@/data/kommuner';
 import { haptic } from '@/lib/haptics';
 import { uid, useApp, type Contact, type CrisisCard, type Member } from '@/store/app';
 import { radius, space, usePalette } from '@/theme';
@@ -12,7 +13,11 @@ export default function KrisekortRediger() {
   const p = usePalette();
   const stored = useApp((s) => s.card);
   const setCard = useApp((s) => s.setCard);
-  const [card, setLocal] = useState<CrisisCard>(stored);
+  const [card, setLocal] = useState<CrisisCard>({ ...stored, infoPoint: stored.infoPoint ?? '' });
+  const storedMunicipality = useApp((s) => s.household.municipality);
+  const setHousehold = useApp((s) => s.setHousehold);
+  const [municipality, setMunicipality] = useState(storedMunicipality ?? '');
+  const known = municipalityInfo(municipality);
 
   const set = <K extends keyof CrisisCard>(k: K, v: CrisisCard[K]) => setLocal((c) => ({ ...c, [k]: v }));
 
@@ -22,6 +27,7 @@ export default function KrisekortRediger() {
     set('contacts', card.contacts.map((c) => (c.id === id ? { ...c, ...patch } : c)));
 
   const save = () => {
+    setHousehold({ municipality: municipality.trim() });
     setCard({
       ...card,
       members: card.members.filter((m) => m.name.trim()),
@@ -53,6 +59,25 @@ export default function KrisekortRediger() {
           value={card.outOfTownContact}
           onChangeText={(v) => set('outOfTownContact', v)}
           placeholder="Navn og nummer alle ringer til"
+        />
+      </View>
+
+      <SectionLabel index="!">Kommunens informasjonspunkt</SectionLabel>
+      <View style={styles.group}>
+        <Field label="Kommune" value={municipality} onChangeText={setMunicipality} placeholder="F.eks. Aurskog-Høland" />
+        <Card tone="surfaceAlt" flat style={{ gap: 4 }}>
+          <Txt variant="small">{known ? known.infoPoints : genericInfoPoint}</Txt>
+          {known && !known.verified && (
+            <Txt variant="label" tone="warn">
+              {known.source}
+            </Txt>
+          )}
+        </Card>
+        <Field
+          label="Nærmeste informasjonspunkt"
+          value={card.infoPoint ?? ''}
+          onChangeText={(v) => set('infoPoint', v)}
+          placeholder={known ? 'F.eks. idrettshallen — navn og adresse' : 'Sjekk kommunens nettside: navn og adresse'}
         />
       </View>
 

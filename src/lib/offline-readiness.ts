@@ -52,6 +52,14 @@ export function useOfflineReadiness(): { items: ReadyItem[]; done: number; total
       href: '/krisekort',
     },
     {
+      id: 'infopunkt',
+      label: 'Kommunens infopunkt',
+      hint: card.infoPoint ? card.infoPoint : 'Hvor får du hjelp når strøm og nett er borte?',
+      icon: 'information-outline',
+      done: !!card.infoPoint,
+      href: '/krisekort-rediger',
+    },
+    {
       id: 'lager',
       label: 'Beredskapslager',
       hint: `${Math.round(stocked * 100)} % av varene registrert`,
