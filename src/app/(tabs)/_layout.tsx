@@ -11,10 +11,10 @@ export default function TabsLayout() {
   return (
     <Tabs tabBar={(props) => <TabBar {...props} />} screenOptions={{ headerShown: false }}>
       <Tabs.Screen name="index" />
-      <Tabs.Screen name="lager" />
       <Tabs.Screen name="hva-hvis" />
-      <Tabs.Screen name="tilfluktsrom" />
-      <Tabs.Screen name="kunnskap" />
+      <Tabs.Screen name="kart" />
+      <Tabs.Screen name="bibliotek" />
+      <Tabs.Screen name="verktoy" />
     </Tabs>
   );
 }

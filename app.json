@@ -25,7 +25,8 @@
       "package": "no.beredskap.app",
       "permissions": [
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
       ]
     },
     "web": {
@@ -58,14 +59,32 @@
           "color": "#F2481B"
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-audio",
+      "llama.rn",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Kameraet brukes som lommelykt (blitsen) og til å ta bilde av viktige dokumenter.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Velg bilder av viktige dokumenter som skal lagres i appens arkiv.",
+          "cameraPermission": "Ta bilde av viktige dokumenter som skal lagres i appens arkiv."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
     "extra": {
-      "sheltersUrl": ""
+      "sheltersUrl": "",
+      "mapTileUrl": ""
     }
   }
 }

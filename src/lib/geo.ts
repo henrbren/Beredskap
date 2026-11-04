@@ -78,3 +78,54 @@ export function utmToLatLon(easting: number, northing: number, zone: number): La
       Math.cos(phi1);
   return { lat: deg(lat), lon: deg(lon) };
 }
+
+/** lat/lon → UTM (WGS84/EUREF89). Zone defaults to the standard 6° zone. */
+export function latLonToUtm(lat: number, lon: number, forceZone?: number) {
+  const zone = forceZone ?? Math.floor((lon + 180) / 6) + 1;
+  const a = 6378137;
+  const f = 1 / 298.257223563;
+  const k0 = 0.9996;
+  const e2 = f * (2 - f);
+  const ep2 = e2 / (1 - e2);
+  const phi = rad(lat);
+  const lam = rad(lon);
+  const lam0 = rad((zone - 1) * 6 - 180 + 3);
+  const n = a / Math.sqrt(1 - e2 * Math.sin(phi) ** 2);
+  const t = Math.tan(phi) ** 2;
+  const c = ep2 * Math.cos(phi) ** 2;
+  const A = Math.cos(phi) * (lam - lam0);
+  const m =
+    a *
+    ((1 - e2 / 4 - (3 * e2 ** 2) / 64 - (5 * e2 ** 3) / 256) * phi -
+      ((3 * e2) / 8 + (3 * e2 ** 2) / 32 + (45 * e2 ** 3) / 1024) * Math.sin(2 * phi) +
+      ((15 * e2 ** 2) / 256 + (45 * e2 ** 3) / 1024) * Math.sin(4 * phi) -
+      ((35 * e2 ** 3) / 3072) * Math.sin(6 * phi));
+  const easting =
+    k0 * n * (A + ((1 - t + c) * A ** 3) / 6 + ((5 - 18 * t + t * t + 72 * c - 58 * ep2) * A ** 5) / 120) + 500000;
+  let northing =
+    k0 *
+    (m +
+      n *
+        Math.tan(phi) *
+        ((A * A) / 2 + ((5 - t + 9 * c + 4 * c * c) * A ** 4) / 24 + ((61 - 58 * t + t * t + 600 * c - 330 * ep2) * A ** 6) / 720));
+  if (lat < 0) northing += 10000000;
+  const band = 'CDEFGHJKLMNPQRSTUVWXX'[Math.floor((lat + 80) / 8)] ?? '';
+  return { zone, band, easting: Math.round(easting), northing: Math.round(northing) };
+}
+
+/** 59° 54,834′ N style (degrees and decimal minutes — what rescue services and GPS units use). */
+export function formatDM(value: number, pos: string, neg: string): string {
+  const abs = Math.abs(value);
+  const d = Math.floor(abs);
+  const m = (abs - d) * 60;
+  return `${d}° ${m.toFixed(3).replace('.', ',')}′ ${value >= 0 ? pos : neg}`;
+}
+
+export function formatDMS(value: number, pos: string, neg: string): string {
+  const abs = Math.abs(value);
+  const d = Math.floor(abs);
+  const mFull = (abs - d) * 60;
+  const m = Math.floor(mFull);
+  const s = (mFull - m) * 60;
+  return `${d}° ${m}′ ${s.toFixed(1).replace('.', ',')}″ ${value >= 0 ? pos : neg}`;
+}

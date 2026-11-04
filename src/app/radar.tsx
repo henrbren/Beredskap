@@ -79,7 +79,7 @@ export default function Tilfluktsrom() {
   const hasData = shelters.length > 0;
 
   return (
-    <Screen inTabs eyebrow="Offentlige tilfluktsrom · DSB" title="Tilflukt">
+    <Screen back eyebrow="Offentlige tilfluktsrom · DSB" title="Tilfluktsrom">
       {!hasData && (
         <Card style={{ gap: space.md, marginBottom: space.xl }}>
           <Row>

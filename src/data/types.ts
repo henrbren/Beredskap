@@ -92,3 +92,54 @@ export type SupplyCategory =
   | 'helse'
   | 'hygiene'
   | 'annet';
+
+// ─── Leksikon (offline oppslagsverk, à la Kiwix) ────────────────────────────
+
+export type ArticleCategory =
+  | 'forstehjelp'
+  | 'helse'
+  | 'vann'
+  | 'mat'
+  | 'natur'
+  | 'ly-varme'
+  | 'navigasjon'
+  | 'vaer'
+  | 'kommunikasjon'
+  | 'teknikk'
+  | 'hjem'
+  | 'samfunn';
+
+export interface Article {
+  id: string;
+  title: string;
+  category: ArticleCategory;
+  /** One sentence, shown in lists and search results. */
+  summary: string;
+  /** Extra search words (synonyms, dialect, English terms). */
+  tags: string[];
+  blocks: BookBlock[];
+  /** Ids of other articles. */
+  related?: string[];
+  source: string;
+}
+
+// ─── Kurs / quiz (à la Kolibri) ─────────────────────────────────────────────
+
+export interface QuizQuestion {
+  q: string;
+  options: string[];
+  /** Index into options. */
+  answer: number;
+  /** Why the answer is right — shown after answering. */
+  explain: string;
+}
+
+export interface Quiz {
+  id: string;
+  title: string;
+  /** Book id or article category the quiz belongs to. */
+  topic: string;
+  icon: IconName;
+  accent: Accent;
+  questions: QuizQuestion[];
+}

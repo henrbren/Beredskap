@@ -55,7 +55,7 @@ export default function Lager() {
 
   return (
     <Screen
-      inTabs
+      back
       eyebrow={`DSB-basert · ${persons} pers · ${household.days} døgn`}
       title="Lager"
       right={

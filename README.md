@@ -6,14 +6,24 @@ En egenberedskapsapp for norske husstander, laget i Expo / React Native. Appen f
 
 ## Funksjoner
 
+Beredskap er en lommeutgave av [Project N.O.M.A.D.](https://github.com/Crosstalk-Solutions/project-nomad): bibliotek, kart, lokal AI, kurs og verktøy, alt på telefonen og uten nett.
+
+| N.O.M.A.D. | Beredskap (mobil) |
+|---|---|
+| Kiwix (Wikipedia, oppslagsverk) | **Leksikon** med 160+ artikler om førstehjelp, vann, mat, ly, navigasjon, vær, samband og teknikk. Søk i fulltekst (BM25) på tvers av alt innhold. |
+| ProtoMaps (offline-kart) | **Kart**: Kartverkets topografiske kart. Du kan laste ned områder for offline bruk, se tilfluktsrom-laget, lagre egne punkter (møtested, vannkilde, bil …) og se GPS-posisjon og kompassretning. |
+| Ollama + Qdrant (lokal AI/RAG) | **Assistent**: en lokal språkmodell (llama.cpp via `llama.rn`) som svarer ut fra appens eget bibliotek. Uten modell svarer den med de mest relevante utdragene. |
+| Kolibri (kurs) | **Kurs**: quiz til hver bok, med fremdrift og beredskapssertifikat. |
+| Kommandosentral | **Offline-senter**: sjekkliste for «klar for offline», lagringsoversikt og nedlasting av kart og AI-modell. |
+
+Appen har i tillegg disse delene:
+
 | | |
 |---|---|
-| **I dag** | Beredskapsnivå i prosent, hvor mange døgn vann og mat rekker, neste rotasjon, kvartalssjekk, nødnumre med ett trykk og dagens råd. |
-| **Lager** | Sjekkliste basert på DSBs råd, skalert etter husstanden (voksne, barn, kjæledyr og antall døgn). Du kan sette «bytt innen»-dato og få lokale påminnelser før noe går ut på dato. Knappen «Byttet ut nå» registrerer at du har rotert. Du kan også legge til egne varer. |
-| **Hva hvis** | 19 handlingskort, for eksempel strømbrudd, flyalarm, atomhendelse, flom, hjertestans og brann. Hvert kort har «Ikke gjør dette», steg i tidsfaser som kan krysses av, fakta og en kobling til lageret. Det finnes også en visuell oversikt over Sivilforsvarets varselsignaler. |
-| **Tilflukt** | En radar med kompass som viser nærmeste offentlige tilfluktsrom, med avstand, retning og gangtid. Den bruker GPS og lagrede data og trenger ikke mobilnett. Du får også råd for hva du gjør hvis du ikke rekker frem. |
-| **Krisekort** | Møtested, kontakt utenbys, husstandens helseinformasjon, kontakter, hovedkran og sikringsskap. Kortet kan deles som tekst eller skrives ut / lagres som PDF. |
-| **Kunnskap** | Et bibliotek med 8 bøker og 54 kapitler. *Grunnkurs i egenberedskap* er gratis. Resten hører til **Beredskap Pluss**: Vann, Førstehjelp, Mat, Varme/lys/strøm, Kommunikasjon, Overlevelse i naturen og Mental beredskap. |
+| **I dag** | Beredskapsnivå, hvor mange døgn vann og mat rekker, hurtigverktøy (SOS, lykt, posisjon, kart), status for offline-klar, neste rotasjon og dagens råd. |
+| **Hva hvis** | 19 handlingskort med «Ikke gjør dette», tidsfaser og avkrysning. |
+| **Verktøy** | SOS-signal (blits, skjerm, lyd og fløyte), lommelykt (blits, hvitt eller rødt skjermlys, blink), min posisjon (grader og minutter, UTM og SMS, «les opp for 113»), kompass med kurslås, sol og lys (soloppgang, mørkt, månefase), morse (oversetter og blinking), kalkulatorer (vann og mat, strøm, omregning), arkiv (bilder av dokumenter og krisedagbok), lager, krisekort, tilfluktsrom-radar og nødnumre. |
+| **Bibliotek** | Leksikon, bøker (grunnkurset er gratis, resten er Beredskap Pluss), kurs, søk og assistent. |
 
 ## Design
 
@@ -42,6 +52,21 @@ npm run lint             # expo lint
 npm run fetch:shelters   # bundle DSBs tilfluktsromdata (se under)
 ```
 
+## Offline-kart
+
+Kartet er en egen lett rasterkomponent (`src/components/tile-map.tsx`) uten native kart-SDK, og fungerer likt på iOS, Android og web. Flisene hentes fra Kartverkets åpne topografiske cache (CC BY 4.0). Nedlastede områder lagres i `Paths.document/kart` og brukes før nettet.
+
+- Du kan overstyre kartkilden med `expo.extra.mapTileUrl` (`{z}/{x}/{y}`).
+- ⚠️ URL-malen `https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png` er ikke testet herfra fordi nettet var stengt. Sjekk den mot Kartverkets GetCapabilities før lansering.
+- Følg Kartverkets vilkår for bruk. Nedlasting er begrenset til 25 000 fliser per område.
+
+## Lokal AI
+
+`src/lib/ai.ts` laster ned en GGUF-modell til `Paths.document/modeller` og kjører den med `llama.rn`. Assistenten bruker henting og generering (RAG): `src/lib/search.ts` finner de beste avsnittene i biblioteket, og modellen får beskjed om å svare bare ut fra dem.
+
+- Modellene er Gemma 3 1B (cirka 0,8 GB) og Llama 3.2 3B (cirka 2 GB), begge Q4_K_M. Nedlastingsadressene er ikke testet herfra.
+- `llama.rn` er en native modul. Den virker i en development build eller produksjonsbuild, ikke i Expo Go eller på web. Der faller assistenten tilbake til bibliotekssøk.
+
 ## Tilfluktsrom-data
 
 Kartet bruker DSBs åpne datasett over offentlige tilfluktsrom i GeoJSON-format, som er oppført på data.norge.no og Geonorge.
@@ -64,14 +89,14 @@ Nye bøker legger du til som en fil i `src/data/books/` og registrerer i `src/da
 ```
 src/
   app/                  Expo Router-skjermer
-    (tabs)/             I dag · Lager · Hva hvis · Tilflukt · Kunnskap
+    (tabs)/             I dag · Hva hvis · Kart · Bibliotek · Verktøy
     scenario/[id]       Handlingskort
     bok/[id]            Bokoversikt
     kapittel/[book]/[chapter]
     krisekort(-rediger), vare, pluss, nodnumre, innstillinger, onboarding
   components/           UI-primitiver, fanelinje, måler, bokomslag
-  data/                 Sjekkliste, scenarier, bøker, nødnumre, råd
-  lib/                  Rotasjonsvarsler, beredskapsberegning, geo, tilfluktsrom, PDF
+  data/                 Sjekkliste, scenarier, bøker, leksikon (articles/), kurs (quizzes/), nødnumre, råd
+  lib/                  Søk (BM25), AI, kartfliser, geo/UTM, sol, morse, filer, rotasjonsvarsler, tilfluktsrom, PDF
   store/                Zustand-state, lagret med AsyncStorage
   theme/                Farger, typografi, avstander
 ```

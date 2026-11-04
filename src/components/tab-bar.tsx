@@ -8,10 +8,10 @@ import { fonts, radius, usePalette } from '@/theme';
 
 const meta: Record<string, { label: string; icon: IconName; iconActive: IconName }> = {
   index: { label: 'I dag', icon: 'view-dashboard-outline', iconActive: 'view-dashboard' },
-  lager: { label: 'Lager', icon: 'package-variant', iconActive: 'package-variant-closed' },
   'hva-hvis': { label: 'Hva hvis', icon: 'lightning-bolt-outline', iconActive: 'lightning-bolt' },
-  tilfluktsrom: { label: 'Tilflukt', icon: 'shield-outline', iconActive: 'shield' },
-  kunnskap: { label: 'Kunnskap', icon: 'book-open-outline', iconActive: 'book-open-variant' },
+  kart: { label: 'Kart', icon: 'map-outline', iconActive: 'map' },
+  bibliotek: { label: 'Bibliotek', icon: 'book-open-outline', iconActive: 'book-open-variant' },
+  verktoy: { label: 'Verktøy', icon: 'toolbox-outline', iconActive: 'toolbox' },
 };
 
 /** Floating, ink-coloured tab bar with a signal-orange active pill. */
