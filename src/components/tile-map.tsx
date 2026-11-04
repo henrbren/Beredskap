@@ -190,6 +190,12 @@ export const TileMap = forwardRef<
     <View style={[styles.root, { backgroundColor: p.surfaceAlt }]} onLayout={onLayout}>
       <Animated.View style={[StyleSheet.absoluteFill, { transform }]} {...responder.panHandlers}>
         {tiles.map((t) => (
+          <View
+            key={`g-${t.key}`}
+            style={{ position: 'absolute', left: t.x, top: t.y, width: TILE_SIZE, height: TILE_SIZE, borderColor: p.line, borderWidth: StyleSheet.hairlineWidth }}
+          />
+        ))}
+        {tiles.map((t) => (
           <Image
             key={t.key}
             source={{ uri: t.uri }}

@@ -185,7 +185,7 @@ export async function ask(
     const text = sources.length
       ? sources
           .slice(0, 3)
-          .map((s) => `**${s.doc.title}** — ${s.snippet.slice(0, 320)}${s.snippet.length > 320 ? '…' : ''}`)
+          .map((s) => `**${s.doc.title}**\n${s.snippet.slice(0, 360).trim()}${s.snippet.length > 360 ? ' …' : ''}`)
           .join('\n\n')
       : 'Jeg fant ingenting om dette i biblioteket. Prøv andre ord, eller se «Hva gjør jeg hvis».';
     return { text, sources, generated: false };

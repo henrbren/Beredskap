@@ -18,6 +18,8 @@ export interface SearchDoc {
   /** Where it lives, for display («Leksikon · Vann»). */
   context: string;
   text: string;
+  /** Extra words that should match but never be shown (synonyms). */
+  keywords?: string;
   /** Route params */
   href: { pathname: string; params: Record<string, string> };
   premium?: boolean;
@@ -97,7 +99,8 @@ function buildDocs(): SearchDoc[] {
       kind: 'artikkel',
       title: a.title,
       context: 'Leksikon',
-      text: `${a.summary}\n${a.tags.join(' ')}\n${blocksText(a.blocks)}`,
+      text: `${a.summary}\n${blocksText(a.blocks)}`,
+      keywords: a.tags.join(' '),
       href: { pathname: '/artikkel/[id]', params: { id: a.id } },
     });
   }
@@ -136,7 +139,7 @@ function getIndex(): Index {
   const titleTf: Map<string, number>[] = [];
   const len: number[] = [];
   for (const d of docs) {
-    const toks = tokenize(d.text);
+    const toks = tokenize(`${d.text} ${d.keywords ?? ''}`);
     const m = new Map<string, number>();
     for (const t of toks) m.set(t, (m.get(t) ?? 0) + 1);
     const tm = new Map<string, number>();

@@ -67,7 +67,7 @@ export default function Today() {
         <View style={[styles.ask, { backgroundColor: p.surface, borderColor: p.line }]}>
           <Icon name="creation" tone="signal" />
           <Txt tone="muted" style={{ flex: 1 }}>
-            Spør om hva som helst — uten nett
+            Spør om hva som helst
           </Txt>
           <Icon name="arrow-right" tone="muted" size={18} />
         </View>
